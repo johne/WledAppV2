@@ -10,12 +10,12 @@
 
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import DeviceList from './screens/DeviceList';
+import DeviceList from '../screens/DeviceList';
 import {createStackNavigator, StackScreenProps} from '@react-navigation/stack';
 import 'react-native-gesture-handler';
-import DeviceController from './screens/DeviceController';
-import {useDeviceInfo} from './components/DeviceProvider';
-import {Button} from 'react-native';
+import DeviceController from '../screens/DeviceController';
+import {useDeviceInfo} from '../components/DeviceProvider';
+import WledHeader from './WledHeader';
 
 export type StackParams = {
   Devices: undefined;
@@ -31,12 +31,17 @@ const WledStack = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          header: WledHeader,
+        }}>
         <Stack.Screen name="Devices" component={DeviceList} />
         <Stack.Screen
           name="Device"
           component={DeviceController}
-          options={{title: device.name}}
+          options={{
+            title: device.name,
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

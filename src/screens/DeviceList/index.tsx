@@ -1,40 +1,79 @@
 import React from 'react';
-import {FlatList, RefreshControl, StyleSheet, Text, View} from 'react-native';
+import {
+  Dimensions,
+  FlatList,
+  RefreshControl,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import * as Progress from 'react-native-progress';
 import {StackProps} from '../../WledStack';
 
 import {useDeviceList} from './hooks';
 import DeviceListItem from './DeviceListItem';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 22,
-  },
-  item: {
-    padding: 10,
-    fontSize: 18,
-    height: 44,
-  },
-});
-
 const DeviceList: React.FC<StackProps> = ({navigation, route}) => {
-  const {deviceList, loading, refresh} = useDeviceList();
-
-  console.log('here', {deviceList, loading});
+  const {deviceList, loading, refresh, change} = useDeviceList();
 
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+    <SafeAreaView
+      style={{
+        backgroundColor: '#000',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+      <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          width: Dimensions.get('window').width,
+          height: 60,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <Progress.CircleSnail color={['red', 'green', 'blue']} duration={700} />
+      </View>
       <FlatList
+        style={{
+          backgroundColor: 'transparent',
+        }}
+        numColumns={1}
         data={deviceList}
         renderItem={({item}) => (
-          <DeviceListItem navigation={navigation} item={item} route={route} />
+          <DeviceListItem
+            navigation={navigation}
+            item={item}
+            route={route}
+            change={change}
+          />
         )}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={refresh} />
+          <RefreshControl
+            refreshing={loading}
+            onRefresh={refresh}
+            tintColor="transparent"
+            colors={['transparent']}
+            style={{backgroundColor: 'transparent'}}
+          />
         }
-        ListFooterComponent={() => <Text>pull down to refresh</Text>}
+        ListFooterComponent={() => (
+          <Text
+            style={{
+              color: '#fff',
+              backgroundColor: '#000',
+              textAlign: 'center',
+              fontSize: 15,
+              fontWeight: 'bold',
+              paddingTop: 30,
+            }}>
+            pull down to scan for devices
+          </Text>
+        )}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

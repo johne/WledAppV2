@@ -1,10 +1,11 @@
 import {Service} from 'react-native-zeroconf';
 import Device from './Device';
+import {StateInfo} from './types';
 
 export class WiFiDevice extends Device {
   baseUrl: string;
-  _wsSupport: boolean = false;
   _webSocket: WebSocket | null = null;
+  si?: StateInfo = undefined;
 
   constructor(service: Service) {
     super(service.name);
@@ -16,16 +17,19 @@ export class WiFiDevice extends Device {
   }
 
   async connect() {
-    if (this._wsSupport) {
+    if (this.si?.info?.ws !== -1) {
+      console.log('websocket connecting');
+
       this._webSocket = new WebSocket(
         this.baseUrl.replace('http:', 'ws:') + '/ws',
       );
 
       this._webSocket.onmessage = (event: WebSocketMessageEvent) => {
+        console.log('about to notify');
+        if (this.si) this.si.state = JSON.parse(event.data).state;
         super.notify(event.data);
       };
     }
-    // TODO Connect websocket? then websocket calls listeners
   }
 
   async get(command: string) {
@@ -39,6 +43,12 @@ export class WiFiDevice extends Device {
       },
     })
       .then(res => res.json())
+      .then(res => {
+        if (path === 'json/si') {
+          this.si = res;
+        }
+        return res;
+      })
       .then(res => JSON.stringify(res));
   }
 
@@ -54,6 +64,30 @@ export class WiFiDevice extends Device {
       body,
     })
       .then(res => res.json())
+      .then(res => {
+        if (path == 'json/state' && this.si) this.si.state = res;
+        return res;
+      })
       .then(res => JSON.stringify(res));
+  }
+
+  getVersion(): string {
+    return this.si?.info?.ver || 'unknown';
+  }
+
+  hasBle(): boolean {
+    return !!this.si?.info?.ble?.support;
+  }
+
+  isOn(): boolean {
+    return !!this.si?.state?.on;
+  }
+
+  bright(): number {
+    return this.si?.state?.bri || 0;
+  }
+
+  getStateInfo(): StateInfo | undefined {
+    return this.si;
   }
 }

@@ -8,15 +8,32 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import {DeviceProvider} from './components/DeviceProvider';
 import WledStack from './WledStack';
+import SplashScreen from 'react-native-splash-screen';
+import {SafeAreaView, StatusBar} from 'react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 const App = () => {
+  useEffect(() => {
+    SplashScreen.hide();
+  });
+
   return (
-    <DeviceProvider>
-      <WledStack />
-    </DeviceProvider>
+    <SafeAreaProvider>
+      <SafeAreaView style={{flex: 1, backgroundColor: '#333333', height: 0}}>
+        <StatusBar
+          animated={true}
+          backgroundColor="#333333"
+          barStyle={'light-content'}
+          showHideTransition={'slide'}
+        />
+        <DeviceProvider>
+          <WledStack />
+        </DeviceProvider>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 

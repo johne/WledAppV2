@@ -20,4 +20,13 @@ export class BleDevice extends Device {
   async post(command: string, body: string) {
     return '';
   }
+
+  getVersion(): string {
+    // TODO connect and load info
+    return 'unknown';
+  }
+
+  hasBle(): boolean {
+    return true;
+  }
 }

@@ -17,10 +17,11 @@ export const scanForDevices = async (
       deviceUrls.push(device.baseUrl);
 
       device
-        .get('http://127.0.0.1/json/info')
-        .then(info => {
-          console.log(info);
+        .get('http://127.0.0.1/json/si')
+        .then(si => {
+          console.log(si);
           addDevice(device);
+          device.connect();
         })
         .catch(err => {
           console.log('must not be a wled', JSON.stringify({device, err}));

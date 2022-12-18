@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.11",
+    "@react-native-community/slider": "^4.4.0",
     "@react-native-masked-view/masked-view": "^0.2.8",
     "@react-navigation/native": "^6.1.1",
     "@react-navigation/native-stack": "^6.9.6",
@@ -19,12 +20,17 @@
     "react": "18.1.0",
     "react-native": "0.70.6",
     "react-native-ble-manager": "^8.5.0",
+    "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.8.0",
+    "react-native-progress": "^5.0.0",
     "react-native-reanimated": "^2.13.0",
     "react-native-safe-area-context": "^4.4.1",
     "react-native-screens": "^3.18.2",
+    "react-native-splash-screen": "^3.3.0",
+    "react-native-svg": "^13.6.0",
     "react-native-webview": "^11.26.0",
-    "react-native-zeroconf": "^0.13.7"
+    "react-native-zeroconf": "^0.13.7",
+    "react-native-zip-archive": "^6.0.9"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

@@ -1,19 +1,27 @@
 import React from 'react';
-import {Platform} from 'react-native';
 import {StackProps} from '../../WledStack';
 import {WebView} from 'react-native-webview';
 import {useDeviceComms} from './hooks';
+import {View} from 'react-native';
 
 const DeviceController: React.FC<StackProps> = ({navigation}) => {
-  const {onMessage, injectedJs, sourceUri, webRef} = useDeviceComms();
+  const {onMessage, injectedJs, sourceUri, webRef, loading} = useDeviceComms();
+
+  if (loading) {
+    return <View style={{backgroundColor: 'black', height: '100%'}} />;
+  }
+
+  console.log('using sourceUri', JSON.stringify({sourceUri}));
 
   return (
     <WebView
+      style={{backgroundColor: 'clear'}}
       injectedJavaScript={injectedJs}
-      source={{uri: sourceUri}}
+      source={{uri: `${sourceUri}index.htm`}}
       javaScriptEnabled={true}
       originWhitelist={['*']}
       allowFileAccess={true}
+      allowingReadAccessToURL={sourceUri}
       onShouldStartLoadWithRequest={event => {
         console.log(JSON.stringify(event));
         return true;
