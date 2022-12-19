@@ -69,6 +69,14 @@ class Device {
   getStateInfo(): StateInfo | undefined {
     return undefined;
   }
+
+  getType(): string {
+    return '';
+  }
+
+  toggleBle(): void {
+    this.postState(JSON.stringify({bleToggle: true}));
+  }
 }
 
 export default Device;

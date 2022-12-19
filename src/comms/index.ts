@@ -6,7 +6,7 @@ export const scanForDevices = async (
   addDevice: (device: Device) => void,
 ): Promise<void> => {
   const bleProm = bleScan(addDevice);
-  const wifiProm = wifiScan(addDevice);
+  //const wifiProm = wifiScan(addDevice);
 
-  await Promise.all([bleProm, wifiProm]);
+  await Promise.all([bleProm]);
 };

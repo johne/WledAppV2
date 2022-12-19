@@ -14,9 +14,11 @@ import WledStack from './WledStack';
 import SplashScreen from 'react-native-splash-screen';
 import {SafeAreaView, StatusBar} from 'react-native';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import BleManager from 'react-native-ble-manager';
 
 const App = () => {
   useEffect(() => {
+    BleManager.start({showAlert: false});
     SplashScreen.hide();
   });
 

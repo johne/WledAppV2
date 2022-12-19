@@ -39,6 +39,8 @@
 	<array>
 		<string>_http._tcp.</string>
 	</array>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This app uses BLE to communicate with WLED devices</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Use the local network to discover WLED lights</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

@@ -87,4 +87,8 @@ export class WiFiDevice extends Device {
   getStateInfo(): StateInfo | undefined {
     return this.si;
   }
+
+  getType(): string {
+    return 'wifi';
+  }
 }

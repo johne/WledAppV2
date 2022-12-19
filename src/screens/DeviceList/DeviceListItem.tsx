@@ -12,17 +12,14 @@ import {StackProps} from '../../WledStack';
 import {useDeviceInfo} from '../../components/DeviceProvider';
 import Device from '../../comms/Device';
 import {useRerender} from './hooks';
+import BleWiFiToggle from './BleWiFiToggle';
 
 interface DeviceListItemProps extends StackProps {
   item: Device;
   change: number;
 }
 
-const DeviceListItem: React.FC<DeviceListItemProps> = ({
-  item,
-  navigation,
-  change,
-}) => {
+const DeviceListItem: React.FC<DeviceListItemProps> = ({item, navigation}) => {
   const {setDevice} = useDeviceInfo();
 
   const {width} = useWindowDimensions();
@@ -36,6 +33,7 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
     <View
       style={{
         width,
+        maxWidth: width,
         backgroundColor: 'black',
         paddingTop: 5,
         paddingBottom: 5,
@@ -45,6 +43,7 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
       <View
         style={{
           width,
+          maxWidth: width,
           flexDirection: 'row',
           justifyContent: 'space-between',
           paddingTop: 5,
@@ -61,6 +60,7 @@ const DeviceListItem: React.FC<DeviceListItemProps> = ({
             {item.name}
           </Text>
         </TouchableOpacity>
+        <BleWiFiToggle item={item} />
         <TouchableOpacity
           onPress={() => item.togglePower()}
           style={{

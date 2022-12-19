@@ -22,15 +22,10 @@ export const useDeviceComms = () => {
   const {device} = useDeviceInfo();
   const [sourceUri, setSourceUri] = useState(bundleSource);
   const [loadingSource, setLoadingSource] = useState(true);
-  const [connecting, setConnecting] = useState(true);
 
   const webRef = useRef<WebView>(null);
 
   useEffect(() => {
-    device.connect().then(() => {
-      setConnecting(false);
-    });
-
     HtmlManager.getRelease(device.getVersion())
       .then(res => {
         if (res) {
@@ -82,6 +77,6 @@ export const useDeviceComms = () => {
     sourceUri,
     injectedJs,
     onMessage,
-    loading: loadingSource || connecting,
+    loading: loadingSource,
   };
 };
