@@ -55,7 +55,7 @@ export const injectedJs = `
 
   addStyle(
     ' \
-    button#buttonCfg { \
+    div.btnwrap button:nth-child(7) { \
       display: none; \
     } \
     .top button { \

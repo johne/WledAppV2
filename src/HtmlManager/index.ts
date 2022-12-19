@@ -22,7 +22,6 @@ class HtmlManager {
     const temp = `${DocumentDirectoryPath}/tempDownloads`;
 
     if (!(await exists(temp))) {
-      console.log('making temp');
       await mkdir(temp);
     }
 
@@ -32,7 +31,6 @@ class HtmlManager {
       await unlink(tempDestZip);
     } catch (error) {}
 
-    console.log('downloading', JSON.stringify({remoteZipFileUrl}));
     const downloadPromise = downloadFile({
       fromUrl: remoteZipFileUrl,
       toFile: tempDestZip,
@@ -40,22 +38,17 @@ class HtmlManager {
 
     const downloadResult = await downloadPromise.promise;
     if (downloadResult.statusCode !== 200) {
-      console.log('failed to download', {remoteZipFileUrl});
       return undefined;
     }
 
-    console.log('unzipping', JSON.stringify({tempDestZip, temp}));
     await unzip(tempDestZip, temp);
 
     const tempHtml = `${temp}/${folder}/wled00/data`;
 
-    console.log('moving', JSON.stringify({tempHtml, dest}));
     await moveFile(tempHtml, dest);
 
-    console.log('deleting', JSON.stringify({temp}));
     await unlink(temp);
 
-    console.log('returning', JSON.stringify({temp}));
     return dest;
   }
 
@@ -64,23 +57,16 @@ class HtmlManager {
     const mainFolder = `${DocumentDirectoryPath}/html/main`;
 
     if (!(await exists(htmlFolder))) {
-      console.log('making html folder', JSON.stringify({htmlFolder}));
       await mkdir(htmlFolder);
     }
 
     const releaseFolder = `${htmlFolder}/v${semver}`;
 
     if (await exists(releaseFolder)) {
-      console.log(
-        'release html folder exists',
-        JSON.stringify({releaseFolder}),
-      );
       return releaseFolder;
     }
 
     const releaseDownload = `${this.releaseBase}/v${semver}.zip`;
-
-    console.log('downloading release', JSON.stringify({releaseDownload}));
 
     const folder = await HtmlManager._downloadArchiveAndUnzip(
       releaseDownload,
@@ -93,11 +79,9 @@ class HtmlManager {
     }
 
     if (await exists(mainFolder)) {
-      console.log('main exists', JSON.stringify({mainFolder}));
       return mainFolder;
     }
 
-    console.log('downloading main', JSON.stringify({main: HtmlManager.main}));
     const downloadResult = await HtmlManager._downloadArchiveAndUnzip(
       HtmlManager.main,
       mainFolder,

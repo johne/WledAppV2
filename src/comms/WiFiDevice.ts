@@ -18,14 +18,11 @@ export class WiFiDevice extends Device {
 
   async connect() {
     if (this.si?.info?.ws !== -1) {
-      console.log('websocket connecting');
-
       this._webSocket = new WebSocket(
         this.baseUrl.replace('http:', 'ws:') + '/ws',
       );
 
       this._webSocket.onmessage = (event: WebSocketMessageEvent) => {
-        console.log('about to notify');
         if (this.si) this.si.state = JSON.parse(event.data).state;
         super.notify(event.data);
       };

@@ -19,7 +19,6 @@ export const scanForDevices = async (
       device
         .get('http://127.0.0.1/json/si')
         .then(si => {
-          console.log(si);
           addDevice(device);
           device.connect();
         })

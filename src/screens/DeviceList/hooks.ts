@@ -19,7 +19,6 @@ export const useDeviceList = () => {
     const devices = deviceList.map(device => ({
       device,
       key: device.addListener(() => {
-        console.log('changed');
         setChange(change => change + 1);
       }),
     }));

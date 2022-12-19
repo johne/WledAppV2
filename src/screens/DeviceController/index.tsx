@@ -11,8 +11,6 @@ const DeviceController: React.FC<StackProps> = ({navigation}) => {
     return <View style={{backgroundColor: 'black', height: '100%'}} />;
   }
 
-  console.log('using sourceUri', JSON.stringify({sourceUri}));
-
   return (
     <WebView
       style={{backgroundColor: 'clear'}}
@@ -23,7 +21,6 @@ const DeviceController: React.FC<StackProps> = ({navigation}) => {
       allowFileAccess={true}
       allowingReadAccessToURL={sourceUri}
       onShouldStartLoadWithRequest={event => {
-        console.log(JSON.stringify(event));
         return true;
       }}
       onMessage={onMessage}

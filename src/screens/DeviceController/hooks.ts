@@ -6,8 +6,6 @@ import HtmlManager from '../../HtmlManager';
 import {injectedJs} from './injectedJs';
 
 const receiveWs = (webRef: React.RefObject<WebView>, body: string): void => {
-  console.log('injecting ws message');
-
   webRef.current?.injectJavaScript(
     `
     ws && ws.onmessage && ws.onmessage({data: JSON.stringify(${body})});
@@ -35,7 +33,6 @@ export const useDeviceComms = () => {
 
     HtmlManager.getRelease(device.getVersion())
       .then(res => {
-        console.log('got response', res);
         if (res) {
           setSourceUri(`${res}/`);
         }
@@ -59,9 +56,9 @@ export const useDeviceComms = () => {
   const onMessage = async (event: WebViewMessageEvent) => {
     const data = JSON.parse(event.nativeEvent.data);
 
-    console.log('got message: ' + event.nativeEvent.data, {data});
-
     const {url, options, key} = data;
+
+    console.log('got request: ' + url + ' ' + options.method);
 
     const {method, body, isWs} = options;
 
@@ -71,14 +68,10 @@ export const useDeviceComms = () => {
       ? await device.post(url, body)
       : await device.get(url);
 
-    console.log('result', result);
-
     if (isWs) {
       receiveWs(webRef, result);
     } else {
       const injectedResult = `wledApp2Result('${key}', ${result}, true)`;
-
-      console.log('injected result: ' + injectedResult);
 
       webRef.current?.injectJavaScript(injectedResult);
     }

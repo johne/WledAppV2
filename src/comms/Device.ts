@@ -15,7 +15,6 @@ class Device {
   }
 
   async get(command: string) {
-    console.log('base get not implemented');
     return '';
   }
 
@@ -28,13 +27,11 @@ class Device {
   }
 
   togglePower() {
-    console.log('adjusting on' + !this.isOn());
     const json = {on: !this.isOn()};
     this.postState(JSON.stringify(json));
   }
 
   adjustBright(value: number) {
-    console.log('adjusting bright' + Math.floor(value));
     const json = {bri: Math.floor(value)};
     this.postState(JSON.stringify(json));
   }
@@ -44,7 +41,6 @@ class Device {
   }
 
   notify(body: string) {
-    console.log('notify ' + Object.keys(this.listeners).length);
     Object.values(this.listeners).forEach(listener => listener(body));
   }
 
