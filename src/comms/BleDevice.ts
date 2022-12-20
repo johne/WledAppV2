@@ -27,7 +27,6 @@ export class BleDevice extends Device {
   notifyBuffer = '';
 
   constructor(peripheral: any) {
-    console.log('found ' + JSON.stringify(peripheral));
     super(peripheral.advertising.localName);
     this.id = peripheral.id;
   }
@@ -54,7 +53,6 @@ export class BleDevice extends Device {
             this.notifyBuffer += String.fromCharCode.apply(null, data.value);
 
             if (data.value.length !== CHUNK_LENGTH) {
-              console.log(this.notifyBuffer);
               if (this.si) this.si.state = JSON.parse(this.notifyBuffer);
               this.notify(this.notifyBuffer);
               this.notifyBuffer = '';
@@ -77,21 +75,21 @@ export class BleDevice extends Device {
         }
       },
     );
-    console.log('here1');
+    console.log('connect 1');
     await BleManager.retrieveServices(this.id);
-    console.log('here2');
+    console.log('connect 2');
     await BleManager.startNotification(
       this.id,
       WLED_BLE_DATA_SERVICE_ID,
       WLED_BLE_STATE_INFO_DATA_ID,
     );
-    console.log('here3');
+    console.log('connect 3');
     await BleManager.startNotification(
       this.id,
       WLED_BLE_DATA_SERVICE_ID,
       WLED_BLE_STATE_INFO_NOTIFY_ID,
     );
-    console.log('here4');
+    console.log('connect 4');
 
     this.si = JSON.parse(await this.get('http://localhost/json/si'));
     this.connected = true;
@@ -1398,23 +1396,50 @@ export class BleDevice extends Device {
       this.read(path, resolve, reject);
     });
 
-    console.log('command response: ' + command, response);
-
-    console.log((response as any).state);
-
     return response;
+  }
+
+  async chunckWrite(data: number[]): Promise<void> {
+    if (data.length % CHUNK_LENGTH === 0) {
+      data.push(32); // append a space
+    }
+
+    let remaining = data.length;
+    let pos = 0;
+
+    do {
+      const toWrite = Math.min(remaining, CHUNK_LENGTH);
+
+      console.log('posting chunk', {pos, toWrite, len: data.length, remaining});
+
+      await BleManager.write(
+        this.id,
+        WLED_BLE_DATA_SERVICE_ID,
+        WLED_BLE_STATE_INFO_DATA_ID,
+        data.slice(pos, pos + toWrite),
+        CHUNK_LENGTH,
+      );
+
+      pos += toWrite;
+      remaining -= toWrite;
+
+      console.log('posted chunk', {
+        next: pos,
+        wrote: toWrite,
+        len: data.length,
+        nextRemaining: remaining,
+      });
+    } while (remaining > 0);
   }
 
   async post(command: string, body: string) {
     const path = command.split('/').slice(3).join('/');
 
-    if (path === 'json/state') {
-      await BleManager.write(
-        this.id,
-        WLED_BLE_DATA_SERVICE_ID,
-        WLED_BLE_STATE_INFO_DATA_ID,
-        this.convertString(body),
-      );
+    console.log('post', {command, body});
+
+    if (path === 'json/state' || path === 'json/si') {
+      console.log('posting', body);
+      await this.chunckWrite(this.convertString(body));
     }
 
     return JSON.stringify({success: true});

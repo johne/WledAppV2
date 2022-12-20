@@ -36,6 +36,8 @@ export class WiFiDevice extends Device {
   async get(command: string) {
     const path = command.split('/').slice(3).join('/');
 
+    console.log('wifi reading ' + path);
+
     return fetch(`${this.baseUrl}/${path}`, {
       method: 'GET',
       headers: {
@@ -55,6 +57,8 @@ export class WiFiDevice extends Device {
 
   async post(command: string, body: string) {
     const path = command.split('/').slice(3).join('/');
+
+    console.log('wifi post ' + path, body);
 
     return fetch(`${this.baseUrl}/${path}`, {
       method: 'POST',

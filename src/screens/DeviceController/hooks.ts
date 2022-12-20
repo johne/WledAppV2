@@ -53,8 +53,6 @@ export const useDeviceComms = () => {
 
     const {url, options, key} = data;
 
-    console.log('got request: ' + url + ' ' + options.method);
-
     const {method, body, isWs} = options;
 
     const isPost = method.toLowerCase() === 'post';

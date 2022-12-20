@@ -28,10 +28,11 @@ export const scanForDevices = async (
   });
 
   bleManagerEmitter.addListener('BleManagerDisconnectPeripheral', () => {
+    // TODO
     console.log('BleManagerDisconnectPeripheral');
   });
 
-  console.log('trying to scan');
+  console.log('starting scan');
 
   await BleManager.scan([], 10, true)
     .then(() => {
