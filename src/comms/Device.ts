@@ -77,6 +77,10 @@ class Device {
   toggleBle(): void {
     this.postState(JSON.stringify({bleToggle: true}));
   }
+
+  isConnected(): boolean {
+    return false;
+  }
 }
 
 export default Device;

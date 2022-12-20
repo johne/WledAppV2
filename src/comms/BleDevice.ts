@@ -1,6 +1,7 @@
 import Device from './Device';
 import BleManager from 'react-native-ble-manager';
 import {bleManagerEmitter} from './bleScanner';
+import {StateInfo} from './types';
 
 const WLED_BLE_MAIN_SERVICE_ID = 'BEE30000-A2EB-4F7A-889B-13192C8C1819';
 const WLED_BLE_MAIN_BLE_ON_ID = 'BEE30001-A2EB-4F7A-889B-13192C8C1819';
@@ -21,6 +22,9 @@ interface Reqeust {
 export class BleDevice extends Device {
   id: string = '';
   outstandingRequestMap: Record<string, Reqeust> = {};
+  connected: boolean = false;
+  si?: StateInfo = undefined;
+  notifyBuffer = '';
 
   constructor(peripheral: any) {
     console.log('found ' + JSON.stringify(peripheral));
@@ -46,6 +50,18 @@ export class BleDevice extends Device {
       'BleManagerDidUpdateValueForCharacteristic',
       (data: any) => {
         if (data.peripheral === this.id) {
+          if (data.characteristic === WLED_BLE_STATE_INFO_NOTIFY_ID) {
+            this.notifyBuffer += String.fromCharCode.apply(null, data.value);
+
+            if (data.value.length !== CHUNK_LENGTH) {
+              console.log(this.notifyBuffer);
+              if (this.si) this.si.state = JSON.parse(this.notifyBuffer);
+              this.notify(this.notifyBuffer);
+              this.notifyBuffer = '';
+            }
+            return;
+          }
+
           const request = this.outstandingRequestMap[data.characteristic];
 
           if (request) {
@@ -77,7 +93,9 @@ export class BleDevice extends Device {
     );
     console.log('here4');
 
-    this.get('http://localhost/json/si');
+    this.si = JSON.parse(await this.get('http://localhost/json/si'));
+    this.connected = true;
+    this.notify('{}');
   }
 
   read(
@@ -1388,19 +1406,41 @@ export class BleDevice extends Device {
   }
 
   async post(command: string, body: string) {
-    return '';
+    const path = command.split('/').slice(3).join('/');
+
+    if (path === 'json/state') {
+      await BleManager.write(
+        this.id,
+        WLED_BLE_DATA_SERVICE_ID,
+        WLED_BLE_STATE_INFO_DATA_ID,
+        this.convertString(body),
+      );
+    }
+
+    return JSON.stringify({success: true});
   }
 
   getVersion(): string {
-    // TODO connect and load info
-    return 'unknown';
+    return this.si?.info?.ver || 'unknown';
   }
 
   hasBle(): boolean {
     return true;
   }
 
+  isOn(): boolean {
+    return !!this.si?.state?.on;
+  }
+
+  bright(): number {
+    return this.si?.state?.bri || 0;
+  }
+
   getType(): string {
     return 'ble';
+  }
+
+  isConnected(): boolean {
+    return this.connected;
   }
 }

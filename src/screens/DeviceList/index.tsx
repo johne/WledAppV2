@@ -4,7 +4,6 @@ import {
   FlatList,
   RefreshControl,
   SafeAreaView,
-  StyleSheet,
   Text,
   View,
 } from 'react-native';
@@ -46,8 +45,8 @@ const DeviceList: React.FC<StackProps> = ({navigation, route}) => {
           <DeviceListItem
             navigation={navigation}
             item={item}
-            route={route}
             change={change}
+            route={route}
           />
         )}
         refreshControl={

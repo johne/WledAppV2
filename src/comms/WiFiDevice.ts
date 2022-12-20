@@ -6,6 +6,7 @@ export class WiFiDevice extends Device {
   baseUrl: string;
   _webSocket: WebSocket | null = null;
   si?: StateInfo = undefined;
+  connected: boolean = false;
 
   constructor(service: Service) {
     super(service.name);
@@ -26,6 +27,9 @@ export class WiFiDevice extends Device {
         if (this.si) this.si.state = JSON.parse(event.data).state;
         super.notify(event.data);
       };
+
+      this.connected = true;
+      this.notify('{}');
     }
   }
 
@@ -90,5 +94,9 @@ export class WiFiDevice extends Device {
 
   getType(): string {
     return 'wifi';
+  }
+
+  isConnected(): boolean {
+    return this.connected;
   }
 }

@@ -15,9 +15,7 @@ export class BleManagerModule {
   }
 
   removeAllSubscription() {
-    Object.values(this.subscriptions).forEach(sub =>
-      this.emitter.removeSubscription(sub),
-    );
+    Object.values(this.subscriptions).forEach(sub => sub.remove());
     this.subscriptions = {};
   }
 
