@@ -39,10 +39,13 @@ export const WLED_BLE_PALETTE_DETAILS_DATA_ID =
 export const WLED_BLE_PALETTE_DETAILS_CONTROL_ID =
   'BEE30602-A2EB-4F7A-889B-13192C8C1819';
 
-export const pathMapping: Record<
-  string,
-  {service: string; data: string; control: string}
-> = {
+export interface Endpoint {
+  service: string;
+  data: string;
+  control: string;
+}
+
+export const pathMapping: Record<string, Endpoint> = {
   '/json/state': {
     service: WLED_BLE_DATA_SERVICE_ID,
     data: WLED_BLE_STATE_INFO_DATA_ID,

@@ -8,6 +8,9 @@ interface Request {
   messageBuffer: string;
   resolve: (value: string | PromiseLike<string>) => void;
   reject: (reason?: any) => void;
+  page: number;
+  param: string;
+  endpoint: bleConsts.Endpoint;
 }
 
 export class BleDevice extends Device {
@@ -41,11 +44,14 @@ export class BleDevice extends Device {
   }
 
   mapRequestResponse(response: string, charId: string): string {
-    if (charId === bleConsts.WLED_BLE_PALETTE_NAME_DATA_ID) {
-      return JSON.stringify(JSON.parse(response).palettes);
+    switch (charId) {
+      case bleConsts.WLED_BLE_FX_DETAILS_DATA_ID:
+      case bleConsts.WLED_BLE_FX_NAMES_DATA_ID:
+      case bleConsts.WLED_BLE_PALETTE_NAME_DATA_ID:
+        return JSON.stringify(JSON.parse(response).array);
+      default:
+        return response;
     }
-
-    return response;
   }
 
   async connect(): Promise<void> {
@@ -54,6 +60,10 @@ export class BleDevice extends Device {
     bleManagerEmitter.addListener(
       'BleManagerDidUpdateValueForCharacteristic',
       (data: any) => {
+        if (data.characteristic === bleConsts.WLED_BLE_PRESETS_DATA_ID) {
+          console.log('got preset data: ' + data.value.length);
+        }
+
         if (data.peripheral === this.id) {
           if (data.characteristic === bleConsts.WLED_BLE_STATE_INFO_NOTIFY_ID) {
             this.notifyBuffer += String.fromCharCode.apply(null, data.value);
@@ -81,6 +91,14 @@ export class BleDevice extends Device {
                 ),
               );
               request.messageBuffer = '';
+            } else {
+              request.page++;
+              BleManager.write(
+                this.id,
+                request.endpoint.service,
+                request.endpoint.control,
+                this.convertString('r' + request.param + ':' + request.page),
+              );
             }
           }
         }
@@ -115,12 +133,15 @@ export class BleDevice extends Device {
         this.id,
         endpoint.service,
         endpoint.control,
-        this.convertString('r' + param),
+        this.convertString('r' + param + ':1'),
       );
       this.outstandingRequestMap[endpoint.data] = {
         messageBuffer: '',
         resolve,
         reject,
+        page: 1,
+        param,
+        endpoint,
       };
     });
   }

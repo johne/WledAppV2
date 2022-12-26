@@ -52,7 +52,11 @@ export class WiFiDevice extends Device {
         }
         return res;
       })
-      .then(res => JSON.stringify(res));
+      .then(res => JSON.stringify(res))
+      .then(res => {
+        console.log('response: ' + path, res);
+        return res;
+      });
   }
 
   async post(command: string, body: string) {
