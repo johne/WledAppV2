@@ -157,15 +157,6 @@ export class BleDevice extends Device {
 
     const page = url.searchParams.get('page') || '';
 
-    // if (path === '/presets.json') {
-    //   return JSON.stringify({
-    //     0: {},
-    //     1: {ps: 1, n: 'One', on: true},
-    //     2: {ps: 2, n: 'two', on: true},
-    //     3: {ps: 3, n: 'Three', on: true},
-    //   });
-    // }
-
     if (endpoint) {
       return this.startRead(endpoint, page);
     }
