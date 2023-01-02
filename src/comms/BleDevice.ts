@@ -69,7 +69,7 @@ export class BleDevice extends Device {
             this.notifyBuffer += String.fromCharCode.apply(null, data.value);
 
             if (data.value.length !== bleConsts.CHUNK_LENGTH) {
-              if (this.si) this.si.state = JSON.parse(this.notifyBuffer);
+              if (this.si) this.si = JSON.parse(this.notifyBuffer);
               this.notify(this.notifyBuffer);
               this.notifyBuffer = '';
             }
